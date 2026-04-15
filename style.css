@@ -1,0 +1,18 @@
+/* Requisito: Alerta visual para gastos > 100 */
+.gasto-alto td {
+    color: red !important;
+    font-weight: bold;
+    background-color: #ffe8e8 !important;
+}
+
+/* Requisito: Feedback visual no botão */
+.botao-animado:hover {
+    transform: scale(1.05);
+    transition: 0.2s;
+}
+
+/* Estilo extra para labels */
+label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
