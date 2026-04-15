@@ -1,18 +1,31 @@
-/* Requisito: Alerta visual para gastos > 100 */
+/* Adicionamos 'td' para garantir que a cor vermelha vença o estilo do Bootstrap */
 .gasto-alto td {
-    color: red !important;
+    color: #ff0000 !important; /* Vermelho vivo */
     font-weight: bold;
-    background-color: #ffe8e8 !important;
+    background-color: #ffe8e8 !important; /* Fundo rosado para destaque */
 }
 
-/* Requisito: Feedback visual no botão */
+/* Requisito: Feedback visual no botão (Critério 2) */
 .botao-animado:hover {
     transform: scale(1.05);
     transition: 0.2s;
+    filter: brightness(1.1);
 }
 
-/* Estilo extra para labels */
+/* Estilização semântica para labels e outputs */
 label {
     font-weight: 500;
     margin-bottom: 5px;
+    display: block;
+}
+
+output {
+    font-weight: bold;
+    color: #0c5460;
+}
+
+/* Garante que a tabela seja legível em dispositivos móveis (Responsividade) */
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
 }

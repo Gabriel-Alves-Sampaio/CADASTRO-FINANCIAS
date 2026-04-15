@@ -1,71 +1,86 @@
+// Array de objetos para armazenar os dados (Critério 4)
 var listaFinancas = [];
 
 function salvarGasto() {
+    // Captura de dados (Passo a passo recomendado)
     let desc = document.getElementById('descricao').value;
     let preco = document.getElementById('valor').value;
     let cat = document.getElementById('categoria').value;
 
-    if (desc && preco && cat) {
+    // Validação: não permite envio em branco (Critério 3)
+    if (desc.trim() !== "" && preco !== "" && cat.trim() !== "") {
         let novoItem = { 
             descricao: desc, 
-            valor: preco, 
+            valor: parseFloat(preco), 
             categoria: cat 
         };
         
+        // Armazenamento no Array
         listaFinancas.push(novoItem);
+        
+        // Renderização e Cálculos
         atualizarTela();
         
-        // Limpa o formulário após salvar
+        // Limpa o formulário após o envio (Critério 3)
         document.getElementById('descricao').value = "";
         document.getElementById('valor').value = "";
         document.getElementById('categoria').value = "";
     } else {
-        alert("Por favor, preencha todos os campos!");
+        alert("Por favor, preencha todos os campos obrigatórios!");
     }
 }
 
 function atualizarTela() {
-    // Reseta o cabeçalho da tabela antes de reconstruir
-    let tabela = document.getElementById('tabela').innerHTML = "<tr><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Ações</th></tr>";
+    // Selecionamos o corpo da tabela (tbody) para manter o cabeçalho fixo no HTML
+    let corpoTabela = document.getElementById('corpoTabela');
+    corpoTabela.innerHTML = ""; // Limpa a lista antes de renderizar
+    
     let somaTotal = 0;
 
-    for (let i = 0; i <= (listaFinancas.length - 1); i++) {
-        let destaque = "";
-        // Se o valor for maior que 100, aplica a classe vermelha
-        if (parseFloat(listaFinancas[i].valor) > 100) {
-            destaque = "class='gasto-alto'";
+    // Função para varrer o Array (Critério 4)
+    for (let i = 0; i < listaFinancas.length; i++) {
+        let item = listaFinancas[i];
+        let linha = document.createElement('tr');
+
+        // Lógica do Alerta Visual: Destaque para valores > 100 (Diferencial)
+        if (item.valor > 100) {
+            linha.classList.add('gasto-alto');
         }
 
-        tabela += "<tr " + destaque + ">" +
-                    "<td>" + listaFinancas[i].descricao + "</td>" +
-                    "<td>" + listaFinancas[i].categoria + "</td>" +
-                    "<td>R$ " + parseFloat(listaFinancas[i].valor).toFixed(2) + "</td>" +
-                    "<td>" +
-                        "<button class='btn btn-success btn-sm me-2' onclick='editarGasto(this.parentNode.parentNode.rowIndex)'>Editar</button>" +
-                        "<button class='btn btn-danger btn-sm' onclick='excluirGasto(this.parentNode.parentNode.rowIndex)'>Excluir</button>" +
-                    "</td>" +
-                  "</tr>";
+        // Montagem das células da tabela
+        linha.innerHTML = `
+            <td>${item.descricao}</td>
+            <td>${item.categoria}</td>
+            <td>R$ ${item.valor.toFixed(2)}</td>
+            <td>
+                <button class="btn btn-success btn-sm me-2" onclick="editarGasto(${i})">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="excluirGasto(${i})">Excluir</button>
+            </td>
+        `;
         
-        somaTotal += parseFloat(listaFinancas[i].valor);
+        corpoTabela.appendChild(linha);
+        somaTotal += item.valor;
     }
     
-    document.getElementById('tabela').innerHTML = tabela;
+    // Atualiza o painel de Total Gasto (Cálculo Automático)
     document.getElementById('exibirTotal').innerHTML = "R$ " + somaTotal.toFixed(2);
 }
 
-function editarGasto(i) {
-    // Volta os dados para os inputs (i-1 porque a linha 0 é o cabeçalho)
-    document.getElementById('descricao').value = listaFinancas[i - 1].descricao;
-    document.getElementById('valor').value = listaFinancas[i - 1].valor;
-    document.getElementById('categoria').value = listaFinancas[i - 1].categoria;
-    
-    // Remove o item antigo do array
-    listaFinancas.splice(i - 1, 1);
+// Função de Remoção: deleta do array e recalcula o total (Critério 4)
+function excluirGasto(indice) {
+    listaFinancas.splice(indice, 1);
     atualizarTela();
 }
 
-function excluirGasto(i) {
-    // Remove do array usando o índice da linha
-    listaFinancas.splice(i - 1, 1);
-    atualizarTela();
+// Função de Edição (Diferencial adicional)
+function editarGasto(indice) {
+    let item = listaFinancas[indice];
+    
+    // Devolve os valores para os inputs para alteração
+    document.getElementById('descricao').value = item.descricao;
+    document.getElementById('valor').value = item.valor;
+    document.getElementById('categoria').value = item.categoria;
+    
+    // Remove o item antigo para que o novo seja salvo ao clicar em 'Salvar'
+    excluirGasto(indice);
 }
